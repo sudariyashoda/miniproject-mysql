@@ -1,0 +1,397 @@
+/*
+Name - RRMSY Bambaradeniya
+
+*/
+
+-- Create the database
+CREATE DATABASE Suwapiyasa;
+
+-- Use the database
+USE Suwapiyasa;
+
+-- Create the Staff table
+CREATE TABLE Staff (
+    employee_number INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    gender VARCHAR(10) NOT NULL,
+    address VARCHAR(200) NOT NULL,
+    telephone VARCHAR(15) NOT NULL,
+    UNIQUE (telephone)
+);
+
+-- Create the Doctors table
+CREATE TABLE Doctors (
+    employee_number INT PRIMARY KEY,
+    specialty VARCHAR(50) NOT NULL,
+    HD_number INT,
+    FOREIGN KEY (employee_number) REFERENCES Staff (employee_number)
+);
+
+-- Create the Surgeons table
+CREATE TABLE Surgeons (
+    employee_number INT PRIMARY KEY,
+    specialty VARCHAR(50) NOT NULL,
+    type_of_contract VARCHAR(50) NOT NULL,
+    contract_length INT NOT NULL,
+    FOREIGN KEY (employee_number) REFERENCES Staff (employee_number)
+);
+
+-- Create the Nurses table
+CREATE TABLE Nurses (
+    employee_number INT PRIMARY KEY,
+    grade VARCHAR(10) NOT NULL,
+    years_of_experience INT NOT NULL,
+    surgery_skill_type VARCHAR(50) NOT NULL,
+    FOREIGN KEY (employee_number) REFERENCES Staff (employee_number)
+);
+
+-- Create the Patients table
+CREATE TABLE Patients (
+    patient_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    address VARCHAR(200) NOT NULL,
+    telephone VARCHAR(15) NOT NULL,
+    blood_type VARCHAR(5) NOT NULL,
+    allergies VARCHAR(200),
+    UNIQUE (telephone)
+);
+
+-- Create the PatientLocation table
+CREATE TABLE PatientLocation (
+    patient_id INT PRIMARY KEY,
+    bed_number VARCHAR(10) NOT NULL,
+    room_number VARCHAR(10) NOT NULL,
+    nursing_unit VARCHAR(50) NOT NULL,
+    FOREIGN KEY (patient_id) REFERENCES Patients (patient_id)
+);
+
+-- Create the Medications table
+CREATE TABLE Medications (
+    medication_code INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    quantity_on_hand INT NOT NULL,
+    quantity_ordered INT NOT NULL,
+    cost DECIMAL(10, 2) NOT NULL,
+    expiration_date DATE NOT NULL
+);
+
+-- Create the MedicationInteractions table
+CREATE TABLE MedicationInteractions (
+    interaction_id INT PRIMARY KEY,
+    medication_code INT NOT NULL,
+    severity VARCHAR(50) NOT NULL,
+    FOREIGN KEY (medication_code) REFERENCES Medications (medication_code)
+);
+
+-- Create the Surgeries table
+CREATE TABLE Surgeries (
+    surgery_id INT PRIMARY KEY,
+    patient_id INT NOT NULL,
+    surgery_name VARCHAR(100) NOT NULL,
+    date_of_surgery DATE NOT NULL,
+    time_of_surgery TIME NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    special_needs VARCHAR(200),
+    surgeon_employee_number INT NOT NULL,
+    theatre VARCHAR(50) NOT NULL,
+    FOREIGN KEY (patient_id) REFERENCES Patients (patient_id),
+    FOREIGN KEY (surgeon_employee_number) REFERENCES Surgeons (employee_number)
+);
+
+-- Create the SurgeryNurses table
+CREATE TABLE SurgeryNurses (
+    surgery_id INT NOT NULL,
+    nurse_employee_number INT NOT NULL,
+    date_of_surgery DATE NOT NULL,
+    PRIMARY KEY (surgery_id, nurse_employee_number, date_of_surgery),
+    FOREIGN KEY (surgery_id) REFERENCES Surgeries (surgery_id),
+    FOREIGN KEY (nurse_employee_number) REFERENCES Nurses (employee_number)
+);
+
+-- Create the PrimaryCareDoctors table
+CREATE TABLE PrimaryCareDoctors (
+    patient_id INT PRIMARY KEY,
+    primary_doctor_employee_number INT NOT NULL,
+    FOREIGN KEY (patient_id) REFERENCES Patients (patient_id),
+    FOREIGN KEY (primary_doctor_employee_number) REFERENCES Doctors (employee_number)
+);
+
+/*
+Name - RRMSY Bambaradeniya
+
+*/
+
+-- Insert data into Staff table
+INSERT INTO Staff (employee_number, name, gender, address, telephone)
+VALUES
+    (1001, 'Achintha Viraj', 'Male', '123 Main Street', '081-5551234'),
+    (1002, 'Nisansala sandeepani', 'Female', '456 Oak Road', '081-5555678'),
+    (1003, 'Sudari Yashoda', 'Female', '789 Peradeniya Road', '081-5559266'),
+    (1004, 'Yasanga Sudaraka', 'Male', '49 Kandy Road', '081-5459870'),
+    (1005, 'Kamal perera', 'Male', '52/A Gelioya Road', '081-5259876'),
+    (1006, 'Saman Mallawa', 'Male', '123 Main Street,Colombo', '081-6661234'),
+    (1007, 'Kumudu Jayasinhage', 'Female', '456 Oak Road,Colombo', '081-6475678'),
+    (1008, 'Kasuni Peris', 'Female', '789 Peradeniya Road,Kandy', '081-1526866'),
+    (1009, 'Janidu Eranda', 'Male', '149/A Kandy Road', '081-5454263'),
+    (10010, 'Saman ', 'Male', '123 Main Street,Colombo', '081-1524863');
+
+-- Insert data into Doctors table
+INSERT INTO Doctors (employee_number, specialty, HD_number)
+VALUES
+    (1001, 'Cardiology', NULL),
+    (1002, 'Orthopedics', NULL),
+    (1003, 'Neurology', 1001);
+
+-- Insert data into Surgeons table
+INSERT INTO Surgeons (employee_number, specialty, type_of_contract, contract_length)
+VALUES
+    (1004, 'General Surgery', 'Contract', 12),
+    (1005, 'Plastic Surgery', 'Contract', 6);
+
+-- Insert data into Nurses table
+INSERT INTO Nurses (employee_number, grade, years_of_experience, surgery_skill_type)
+VALUES
+    (1006, 'Senior', 5, 'Cardiac Surgery'),
+    (1007, 'Junior', 2, 'Orthopedic Surgery'),
+    (1008, 'Senior', 7, 'Neurosurgery'),
+    (1009, 'Junior', 1, 'Vascular Surgery');
+
+-- Insert data into Patients table
+INSERT INTO Patients (patient_id, name, age, address, telephone, blood_type, allergies)
+VALUES
+    (5001, 'W.A. Perera', 35, '789 Manampitiya Lane', '011-5551111', 'A+', 'Penicillin'),
+    (5002, 'R.D.B. Dias', 50, '456 Pine Street,Galle', '011-5552222', 'B-', 'Nuts, Latex'),
+    (5003, 'S.J. Adikari', 22, '123 Kandy Road', '081-5553333', 'O+', 'None');
+
+-- Insert data into PatientLocation table
+INSERT INTO PatientLocation (patient_id, bed_number, room_number, nursing_unit)
+VALUES
+    (5001, '101', 'A101', 'Cardiac Care'),
+    (5002, '202', 'B202', 'Orthopedic Care'),
+    (5003, '303', 'C303', 'Neuro Care');
+
+-- Insert data into Medications table
+INSERT INTO Medications (medication_code, name, quantity_on_hand, quantity_ordered, cost, expiration_date)
+VALUES
+    (2001, 'Aspirin', 100, 50, 5.99, '2023-12-31'),
+    (2002, 'Ibuprofen', 80, 30, 8.49, '2024-06-30'),
+    (2003, 'Amoxicillin', 120, 100, 12.75, '2023-10-15');
+
+-- Insert data into MedicationInteractions table
+INSERT INTO MedicationInteractions (interaction_id, medication_code, severity)
+VALUES
+    (3001, 2001, 'Mild'),
+    (3002, 2002, 'Moderate'),
+    (3003, 2003, 'Severe');
+
+-- Insert data into Surgeries table
+INSERT INTO Surgeries (surgery_id, patient_id, surgery_name, date_of_surgery, time_of_surgery, category, special_needs, 
+surgeon_employee_number, theatre)
+VALUES
+    (4001, 5001, 'Cardiac Bypass', '2023-08-10', '10:00:00', 'Cardiac', 'None', 1004, 'Theatre 1'),
+    (4002, 5002, 'Knee Replacement', '2023-09-15', '14:30:00', 'Orthopedic', 'None', 1005, 'Theatre 2');
+
+-- Insert data into SurgeryNurses table
+INSERT INTO SurgeryNurses (surgery_id, nurse_employee_number, date_of_surgery)
+VALUES
+    (4001, 1006, '2023-08-10'),
+    (4001, 1007, '2023-08-10'),
+    (4002, 1007, '2023-09-15'),
+    (4002, 1008, '2023-09-15');
+
+-- Insert data into PrimaryCareDoctors table
+INSERT INTO PrimaryCareDoctors (patient_id, primary_doctor_employee_number)
+VALUES
+    (5001, 1001),
+    (5002, 1002),
+    (5003, 1003);
+
+/*
+Name - RRMSY Bambaradeniya
+
+*/
+
+
+-- Use database suwapiyasa
+USE suwapiyasa;
+
+-- Insert data into Surgeries table
+INSERT INTO Surgeries (surgery_id, patient_id, surgery_name, date_of_surgery, time_of_surgery, category, special_needs, 
+surgeon_employee_number, theatre)
+VALUES 	(4003, 5001, 'Appendectomy', '2023-10-20', '09:30:00', 'General Surgery', 'None', 1004, 'Theatre 3'),
+		(4004, 5002, 'Cataract Surgery', '2023-11-05', '11:00:00', 'Ophthalmology', 'Glasses needed after surgery', 1005, 'Theatre 4');
+
+
+#Q1 – RegistrationNumber - 421428640
+
+-- Create a view to display patient surgery information
+CREATE VIEW PatientSurgeryView AS
+SELECT
+    P.patient_id AS "Patient ID",
+    CONCAT(LEFT(P.name, 1), '. ', SUBSTRING_INDEX(P.name, ' ', -1)) AS "Patient Name",
+    CONCAT(PL.bed_number, ' - ', PL.room_number) AS "Location",
+    S.surgery_name AS "Surgery Name",
+    S.date_of_surgery AS "Date of Surgery"
+FROM
+    Patients P
+JOIN
+    PatientLocation PL ON P.patient_id = PL.patient_id
+JOIN
+    Surgeries S ON P.patient_id = S.patient_id;
+
+-- Query to select data from the view
+SELECT * FROM PatientSurgeryView;
+
+
+#Q2 (i) – RegistrationNumber - 421428640
+
+-- Create the MedInfo table
+CREATE TABLE MedInfo (
+    MedName VARCHAR(100) PRIMARY KEY,
+    QuantityAvailable INT,
+    ExpirationDate DATE
+);
+
+-- Create a trigger to insert data into MedInfo 
+DELIMITER //
+CREATE TRIGGER InsertIntoMedInfo
+AFTER INSERT ON Medications
+FOR EACH ROW
+BEGIN
+    INSERT INTO MedInfo (MedName, QuantityAvailable, ExpirationDate)
+    VALUES (NEW.name, NEW.quantity_on_hand, NEW.expiration_date);
+END;
+//
+DELIMITER ;
+
+-- Test the trigger by inserting a record into Medications
+INSERT INTO Medications (medication_code, name, quantity_on_hand, quantity_ordered, cost, expiration_date)
+VALUES 	(2004, 'Paracetamol', 50, 20, 3.99, '2023-09-03'),
+		(2005, 'Lisinopril', 120, 80, 6.50, '2023-11-15'),
+		(2006, 'Simvastatin', 90, 60, 7.25, '2023-10-31'),
+		(2007, 'Metformin', 150, 100, 4.75, '2023-09-13'),
+		(2008, 'Levothyroxine', 200, 120, 5.99, '2023-09-15');
+        
+-- Check if the data was insertedinto MedInfo
+SELECT * FROM MedInfo;
+
+
+#Q2 (ii) – RegistrationNumber - 421428640
+
+-- Create an AFTER UPDATE trigger to update data in MedInfo
+DELIMITER //
+CREATE TRIGGER UpdateMedInfo
+AFTER UPDATE ON Medications
+FOR EACH ROW
+BEGIN
+    UPDATE MedInfo
+    SET QuantityAvailable = NEW.quantity_on_hand,
+        ExpirationDate = NEW.expiration_date
+    WHERE MedName = NEW.name;
+END;
+//
+DELIMITER ;
+
+-- Update the quantity and expiration date for the inserted medication
+UPDATE Medications
+SET quantity_on_hand = 20, expiration_date = '2023-09-15'
+WHERE medication_code = 2004;
+
+-- Check if the data was updated from MedInfo
+SELECT * FROM MedInfo;
+
+
+#Q2 (iii) – RegistrationNumber - 421428640
+
+-- Create an AFTER DELETE trigger to delete data from MedInfo
+DELIMITER //
+CREATE TRIGGER DeleteFromMedInfo
+AFTER DELETE ON Medications
+FOR EACH ROW
+BEGIN
+    DELETE FROM MedInfo
+    WHERE MedName = OLD.name;
+END;
+//
+DELIMITER ;
+
+-- Delete the inserted medication
+DELETE FROM Medications
+WHERE medication_code = 2004;
+
+-- Check if the data was deleted from MedInfo
+SELECT * FROM MedInfo;
+
+
+#Q3 – RegistrationNumber - 421428640
+
+-- Create the stored procedure
+DELIMITER //
+CREATE PROCEDURE GetMedicationsTakenByPatient(
+    IN patientID INT,
+    INOUT medicationCount INT
+)
+BEGIN
+    SELECT COUNT(*) INTO medicationCount
+    FROM Surgeries S
+    WHERE S.patient_id = patientID;
+END;
+//
+DELIMITER ;
+
+-- Declare a session variable to store the output
+SET @medicationCountOutput = 0;
+
+-- Call the stored procedure and pass the patient ID and session variable as parameters
+CALL GetMedicationsTakenByPatient(5001, @medicationCountOutput);
+
+-- Retrieve the output from the session variable
+SELECT @medicationCountOutput;
+
+
+#Q4 – RegistrationNumber - 421428640
+
+-- Create the function to calculate days remaining for expiration
+DELIMITER //
+CREATE FUNCTION CalculateDaysRemaining(expirationDate DATE) RETURNS INT
+READS SQL DATA
+BEGIN
+    DECLARE daysRemaining INT;
+    SET daysRemaining = DATEDIFF(expirationDate, CURDATE());
+    RETURN daysRemaining;
+END;
+//
+DELIMITER ;
+
+-- Query to display medicines with less than 30 days remaining for expiry
+SELECT
+    M.medication_code,
+    M.name AS medication_name,
+    M.quantity_on_hand,
+    M.cost,
+    M.expiration_date,
+    CalculateDaysRemaining(M.expiration_date) AS days_remaining
+FROM
+    Medications M
+WHERE
+    CalculateDaysRemaining(M.expiration_date) <= 30;
+
+
+#Q5 – RegistrationNumber - 421428640
+
+SELECT * FROM suwapiyasa.patients;
+
+SELECT * FROM suwapiyasa.staff;
+
+/*
+Name - RRMSY Bambaradeniya
+*/
+
+
+
+
+
+
+
+
